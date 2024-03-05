@@ -46,14 +46,28 @@ function insert($firstName, $lastName, $email)
     $stmt->bind_param("sss", $firstName, $lastName, $email);
     $stmt->execute();
     $stmt->close();
+    header('Location: update.php?id='.$conn->insert_id);
 }
 
 //update statement
 function update($firstName, $lastName, $email)
 {
     global $conn;
-    $stmt = $conn->prepare("INSERT INTO devs (firstName, lastName, email) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $firstName, $lastName, $email);
+    $stmt = $conn->prepare("UPDATE devs SET firstName = ?, lastName = ?, email = ? WHERE id = ?");
+    $stmt->bind_param("sssi", $firstName, $lastName, $email, $id);
     $stmt->execute();
+    if($stmt->affected_rows === 0) echo ('Non compus mentis');
     $stmt->close();
+    
+}
+
+//delete statemnt
+function delete($id)
+{
+    global $conn;
+    $stmt = $conn->prepare("DELETE from devs WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    header('Location: /');
+    
 }
